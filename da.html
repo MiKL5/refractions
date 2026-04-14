@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mickael Gaillard — Digital Arts</title>
+
+  <!-- ── Anti-indexation & protection spiders ── -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, nocache">
+  <meta name="googlebot" content="noindex, nofollow, noimageindex">
+  <meta name="bingbot" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="X-Robots-Tag" content="noindex, nofollow">
+
+  <!-- ── Polices ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600&family=Raleway:wght@200;300;400;500&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body class="gallery">
+
+  <!-- Curseur personnalisé -->
+  <div id="cursor"></div>
+
+  <!-- Grain atmosphérique -->
+  <div id="grain" aria-hidden="true"></div>
+
+  <!-- Flash + label de transition catégorie -->
+  <div id="cat-flash"></div>
+  <div id="cat-reveal"></div>
+
+  <!-- ── Header ── -->
+  <header id="hdr">
+    <a class="hdr-name" href="index.html" title="Retour au portfolio">Mickael Gaillard</a>
+    <div class="hdr-sep"></div>
+    <span class="hdr-sub">RÉFRACTIONS</span>
+  </header>
+
+  <!-- ── Arc diaporama ── -->
+  <div id="slide-indicator" title="Slideshow">
+    <svg viewBox="0 0 20 20" width="36" height="36" aria-hidden="true">
+      <circle id="slide-track" cx="10" cy="10" r="9" />
+      <circle id="slide-progress" cx="10" cy="10" r="9" />
+    </svg>
+  </div>
+
+  <!-- ── Navigation latérale catégories ── -->
+  <!--
+    IMPORTANT : les indices doivent correspondre à l'ordre des <section class="cat-row">
+    dans le stage (0 = premier, 1 = deuxième…). Toute modification de l'ordre
+    des sections doit être répercutée ici.
+  -->
+  <nav id="sidebar" aria-label="Catégories">
+    <button class="cat-btn" onclick="jumpCat(0)">Verre</button>
+    <button class="cat-btn" onclick="jumpCat(1)">Eau</button>
+    <button class="cat-btn" onclick="jumpCat(2)">Papier</button>
+    <button class="cat-btn" onclick="jumpCat(3)">Nature</button>
+    <button class="cat-btn" onclick="jumpCat(4)">Animaux</button>
+    <button class="cat-btn" onclick="jumpCat(5)">Portraits</button>
+    <button class="cat-btn" onclick="jumpCat(6)">Fantasy</button>
+  </nav>
+
+  <!-- ── Barre basse : points + compteur ── -->
+  <div id="btmbar">
+    <div id="art-dots" role="tablist"></div>
+    <span id="art-counter" aria-live="polite"></span>
+  </div>
+
+  <!-- ── Hint navigation (disparaît après 6 s) ── -->
+  <div id="hint" aria-hidden="true">
+    ← → &thinsp;Images<br>
+    ↑ ↓ &thinsp;Catégories
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       STAGE — grille 2D
+       Axe vertical   = catégories  (↑ ↓)
+       Axe horizontal = œuvres dans la catégorie (← →)
+
+       ┌─ AJOUTER UNE ŒUVRE ──────────────────────────────────────────────┐
+       │  1. Trouver le bloc data-id="NOM" souhaité dans le stage          │
+       │  2. Dans son <div class="art-rail">, insérer :                   │
+       │                                                                   │
+       │     <figure class="art-frame">                                    │
+       │       <img src="assets/images/…" alt="Titre" loading="lazy">     │
+       │       <div class="art-overlay"></div>                             │
+       │       <figcaption class="art-info">                               │
+       │         <h2 class="art-title">Titre</h2>                         │
+       │       </figcaption>                                               │
+       │     </figure>                                                     │
+       │                                                                   │
+       │  → Aucune modification de script.js ni de style.css requise.     │
+       │  → Supprimer le <figure data-ph="1"> une fois la 1ʳᵉ image       │
+       │    ajoutée dans une catégorie.                                    │
+       └───────────────────────────────────────────────────────────────────┘
+  ════════════════════════════════════════════════════════════════════════ -->
+  <main id="stage" role="main">
+
+    <!-- 0 · Verre -->
+    <section class="cat-row" data-id="verre" data-label="Verre" data-accent="#7dd8f0" style="top:0vh">
+      <div class="art-rail">
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/8AIWYk5NMQN0mDKeDu9M-HlnjJ.jpg" alt="Boxer" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Boxer</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/HNKrmyuEpKX7QsNyXCpU--1--tnc91.jpg" alt="Girafe" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Girafe</h2>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="cat-wm" aria-hidden="true">VERRE</p>
+    </section>
+
+    <!-- 1 · Eau -->
+    <section class="cat-row" data-id="eau" data-label="Eau" data-accent="#3a9bd5" style="top:100vh">
+      <div class="art-rail">
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/frIds4kWBP5LW28w1uB5--1--t6x6d.jpg" alt="The Momentum of Horizons"
+            loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The Momentum of Horizons</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/Z1p7MmPJkYN1LFd6zZ6m-4oqJ-.jpeg" alt="Cup of Mint Tea" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Cup of Mint Tea</h2>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="cat-wm" aria-hidden="true">EAU</p>
+    </section>
+
+    <!-- 2 · Papier -->
+    <section class="cat-row" data-id="papier" data-label="Papier" data-accent="#e8c87a" style="top:200vh">
+      <div class="art-rail">
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/VNMjlggwlJFpV2tKeTy9-Qxf5z.jpg" alt="Cry of Amazonia" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Cry of Amazonia</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/XxthK1aMb5kITHWyAZa3-nf7ip.jpg" alt="Face of the Earth" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Face of the Earth</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/CTjaHQy2E3OwkoVrEFNk-FsiIF.jpg" alt="Paper Teddy Bear" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Paper Teddy Bear</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/IJDAY9cHYZBwXx230nrw--1--dbe98.jpg" alt="The Paper Self" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The Paper Self</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/C1bEYEWuKddHCkznBsTR-uu4sH.jpg" alt="The Wolf Woman" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The Wolf Woman</h2>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="cat-wm" aria-hidden="true">PAPIER</p>
+    </section>
+
+    <!-- 3 · Nature -->
+    <section class="cat-row" data-id="nature" data-label="Nature" data-accent="#6dcf8a" style="top:300vh">
+      <div class="art-rail">
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/tOxejphS9CRw7wM6DGww-uK-oC.jpeg" alt="Lion Hills" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Lion Hills</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/OduvheoVXXu5qhajw0XH-JvmtL.jpg" alt="Les Amants Sylvestres"
+            loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Les Amants Sylvestres</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/YysU92N5CpVbeZqPvYvC-KIRY6.jpeg" alt="The Wooden Virtuoso" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The Wooden Virtuoso</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/7gbbj0mz42A1A4gidHjw-PeWTq.jpg" alt="The Nature in 3026" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Nature in 3026</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/rF8DaGkrIQCawZyGJ0vm--0--pfbpv.jpg"
+            alt="Luminous Flower in Deepest Shadow" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Luminous Flower in Deepest Shadow</h2>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="cat-wm" aria-hidden="true">NATURE</p>
+    </section>
+
+    <!-- 4 · Animaux -->
+    <section class="cat-row" data-id="animaux" data-label="Animaux" data-accent="#e8874a" style="top:400vh">
+      <div class="art-rail">
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/afJIQUDAsSt1oSOdnDJn-Qw9Z7.jpeg" alt="Tiny Giraffe" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Tiny Giraffe</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/WApste62I8zOOlFzFQ1H--1--x09nq.jpg" alt="The Turquoise Maharaja"
+            loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The Turquoise Maharaja</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/kcaGbmxAoDZdaGfCIBJl-gD1Jh.jpg" alt="The Abdication" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The Abdication</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/bGNOyDubin5Se8IneznO-FXN-K.jpg" alt="Cat of chalk" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Cat of chalk</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/r4LPsvMCxt2pxqe0a0Xp-u4xCu.jpg" alt="Raised graphic cat" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Raised graphic cat</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/oEYqu7Ub5I9frU9tuO0z--0--l6g3c.jpg" alt="Scarlett Macaw" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Scarlett Macaw</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/dqzCAE01tcF6lQp9mGkJ--0--8Wfqm.jpg" alt="Baby Kraken in a Teacup"
+            loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Baby Kraken in a Teacup</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/y0K89V5sSp5HEH8fD98B-Pk1SX.jpg" alt="Azure singer" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Azure singer</h2>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="cat-wm" aria-hidden="true">ANIMAUX</p>
+    </section>
+
+    <!-- 5 · Portraits -->
+    <section class="cat-row" data-id="portraits" data-label="Portraits" data-accent="#c49a8a" style="top:500vh">
+      <div class="art-rail">
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/EulJWeeMMJHwVRX5D4TV-Ga-oX.jpg" alt="Le Requiem des Damnés"
+            loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Le Requiem des Damnés</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/TIiu07gs1ahwBSvLqD3v-eSXeO.jpg" alt="Miss Emerald" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Miss Emerald</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/YdorvyeYTXK45T1xxkv2--0--2ceu0.jpg" alt="The Same Perspective"
+            loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The Same Perspective</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/kzBy0lTKEeJUHE9NPH19-bB79X.jpeg" alt="Macaw Soul" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Macaw Soul</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/tQEoIUafHZUKjEIqVk69--0--rzyz2_4x-clty-upscale-aa4vr.jpg"
+            alt="Magdalena Frida Carmen KAHLO CALDERON" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Magdalena Frida Carmen KAHLO CALDERON</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/ww30PGfK7J19iqygAAB6-68ch-.jpg" alt="Artificial intelligence"
+            loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Artificial intelligence</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/Gemini_Generated_Image_wg45oxwg45oxwg45.webp" alt="La Guardiana"
+            loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">La Guardiana</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/fezPb4xw3dNjUJqFcMbr--0--9hinw_7.8125x.webp" alt="Memento Vivere"
+            loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Memento Vivere</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/iwvwEgQFIN3pEz83m7wH--0--4ua4d.jpg" alt="Alegria" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Alegria</h2>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="cat-wm" aria-hidden="true">PORTRAITS</p>
+    </section>
+
+    <!-- 6 · Fantasy -->
+    <section class="cat-row" data-id="fantasy" data-label="Fantasy" data-accent="#e87a9f" style="top:600vh">
+      <div class="art-rail">
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/V4lNsmGbzMpXyDwDPhY5--0--fqcaw_2x-clty-upscale-kerak.jpg"
+            alt="Memories in Shell" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Memories in Shell</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/uF4GzTOObu3IqJqeoMpC--0--cdkwg.jpg" alt="The King of Diamond"
+            loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The King of Diamond</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/p5KE6GqQy7cIchTk5ZWk--0--blpaw.jpg" alt="The Ace of Spades"
+            loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The Ace of Spades</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/xrDWio7aIljPBZBy9c6z--0--1hxzz.jpg" alt="The Emerald Owl" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The Emerald Owl</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/PUBVfwgrt7Zm5niX1GG2--0--s0eu4.jpg" alt="The Unmasked Canal"
+            loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The Unmasked Canal</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/digitalArts/jetSwuiVJUpY8RLDcign--0--6e0cw.jpg" alt="Throne of Time" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Throne of Time</h2>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="cat-wm" aria-hidden="true">FANTASY</p>
+    </section>
+
+  </main>
+
+  <script src="assets/js/script.js"></script>
+</body>
+
+</html>

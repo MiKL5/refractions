@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mickael Gaillard — Photographie</title>
+
+  <!-- ── Anti-indexation & protection spiders ── -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, nocache">
+  <meta name="googlebot" content="noindex, nofollow, noimageindex">
+  <meta name="bingbot" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="X-Robots-Tag" content="noindex, nofollow">
+
+  <!-- ── Polices ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;600&family=Raleway:wght@200;300;400;500&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body class="gallery">
+
+  <!-- Curseur personnalisé -->
+  <div id="cursor"></div>
+
+  <!-- Grain atmosphérique -->
+  <div id="grain" aria-hidden="true"></div>
+
+  <!-- Flash + label de transition catégorie -->
+  <div id="cat-flash"></div>
+  <div id="cat-reveal"></div>
+
+  <!-- ── Header ── -->
+  <header id="hdr">
+    <a class="hdr-name" href="index.html" title="Retour au portfolio">Mickael Gaillard</a>
+    <div class="hdr-sep"></div>
+    <span class="hdr-sub">Mimétismes</span>
+  </header>
+
+  <!-- ── Arc diaporama ── -->
+  <div id="slide-indicator" title="Slideshow">
+    <svg viewBox="0 0 20 20" width="36" height="36" aria-hidden="true">
+      <circle id="slide-track" cx="10" cy="10" r="9" />
+      <circle id="slide-progress" cx="10" cy="10" r="9" />
+    </svg>
+  </div>
+
+  <!-- ── Navigation latérale catégories ── -->
+  <!--
+    IMPORTANT : les indices doivent correspondre à l'ordre des <section class="cat-row">
+    dans le stage (0 = premier, 1 = deuxième…). Toute modification de l'ordre
+    des sections doit être répercutée ici.
+  -->
+  <nav id="sidebar" aria-label="Catégories">
+    <button class="cat-btn" onclick="jumpCat(0)">Paysages</button>
+    <button class="cat-btn" onclick="jumpCat(1)">Nature</button>
+    <button class="cat-btn" onclick="jumpCat(2)">Portraits</button>
+    <button class="cat-btn" onclick="jumpCat(3)">Macro botanique</button>
+    <button class="cat-btn" onclick="jumpCat(4)">Macro entomologique</button>
+  </nav>
+
+  <!-- ── Barre basse : points + compteur ── -->
+  <div id="btmbar">
+    <div id="art-dots" role="tablist"></div>
+    <span id="art-counter" aria-live="polite"></span>
+  </div>
+
+  <!-- ── Hint navigation (disparaît après 6 s) ── -->
+  <div id="hint" aria-hidden="true">
+    ← → &thinsp;Images<br>
+    ↑ ↓ &thinsp;Catégories
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════
+       STAGE — grille 2D
+       Axe vertical   = catégories  (↑ ↓)
+       Axe horizontal = photos dans la catégorie (← →)
+
+       ┌─ AJOUTER UNE PHOTO ──────────────────────────────────────────────┐
+       │  1. Trouver le bloc data-id="NOM" souhaité dans le stage         │
+       │  2. Dans son <div class="art-rail">, insérer :                   │
+       │                                                                  │
+       │     <figure class="art-frame">                                   │
+       │       <img src="assets/images/pics/…" alt="Titre"                │
+       │            loading="lazy">                                       │
+       │       <div class="art-overlay"></div>                            │
+       │       <figcaption class="art-info">                              │
+       │         <h2 class="art-title">Titre</h2>                         │
+       │       </figcaption>                                              │
+       │     </figure>                                                    │
+       │                                                                  │
+       │  → Aucune modification de script.js ni de style.css requise.     │
+       │  → Supprimer le <figure data-ph="1"> une fois la 1ʳᵉ image       │
+       │    ajoutée dans une catégorie.                                   │
+       └──────────────────────────────────────────────────────────────────┘
+  ════════════════════════════════════════════════════════════════════════ -->
+  <main id="stage" role="main">
+
+    <!-- 0 · Paysages -->
+    <section class="cat-row" data-id="paysages" data-label="Paysages" data-accent="#8ab4c8" style="top:0vh">
+      <div class="art-rail">
+        <figure class="art-frame">
+          <img src="assets/images/pics/DSC_4793.webp" alt="Fire & Abyss" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Fire & Abyss</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/pics/DSC_6001.webp" alt="The Anachronism" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The Anachronism</h2>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="cat-wm" aria-hidden="true">PAYSAGES</p>
+    </section>
+
+    <!-- 1 · Nature -->
+    <section class="cat-row" data-id="nature-photo" data-label="Nature" data-accent="#78b896" style="top:100vh">
+      <div class="art-rail">
+        <figure class="art-frame">
+          <img src="assets/images/pics/DSC_5369.webp" alt="Still King" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Still King</h2>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="cat-wm" aria-hidden="true">NATURE</p>
+    </section>
+
+    <!-- 2 · Portraits -->
+    <section class="cat-row" data-id="portraits-photo" data-label="Portraits" data-accent="#c4a08e" style="top:200vh">
+      <div class="art-rail">
+        <figure class="art-frame">
+          <img src="assets/images/pics/DSC_0697.webp" alt="Portrait" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Portrait</h2>
+          </figcaption>
+        </figure>
+        <!-- <figure class="art-frame">
+          <img src="assets/images/pics/DSC_6997.webp" alt="Le jardin ne trompe pas" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Le jardin ne trompe pas</h2>
+          </figcaption>
+        </figure>
+      </div> -->
+        <p class="cat-wm" aria-hidden="true">PORTRAITS</p>
+    </section>
+
+    <!-- 3 · Macro botanique -->
+    <section class="cat-row" data-id="macro-botanique" data-label="Macro botanique" data-accent="#a89ec8"
+      style="top:300vh">
+      <div class="art-rail">
+        <figure class="art-frame">
+          <img src="assets/images/pics/DSC_4876.webp" alt="The Biological Clock" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The Biological Clock</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/pics/DSC_1428.webp" alt="Black velvet" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Black velvet</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/pics/DSC_2134.webp" alt="Hydrostatic Expansion" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Hydrostatic Expansion</h2>
+          </figcaption>
+        </figure>
+        <!-- <figure class="art-frame">
+          <img src="assets/images/pics/DSC_8864.webp" alt="Apple blossom" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Apple blossom</h2>
+          </figcaption>
+        </figure> -->
+        <figure class="art-frame">
+          <img src="assets/images/pics/DSC_0728.webp" alt="Impostor" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">Impostor</h2>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="cat-wm" aria-hidden="true">MACRO BOTANIQUE</p>
+    </section>
+
+    <!-- 4 · Macro entomologique -->
+    <section class="cat-row" data-id="macro-entomologique" data-label="Macro entomologique" data-accent="#90a0b4"
+      style="top:400vh">
+      <div class="art-rail">
+        <figure class="art-frame">
+          <img src="assets/images/pics/DSC_4781.webp" alt="Paon du jour" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">European Peacock — Paon du jour</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/pics/DSC_3775.webp" alt="First day" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">First day</h2>
+          </figcaption>
+        </figure>
+        <figure class="art-frame">
+          <img src="assets/images/pics/DSC_3183.webp" alt="The contract" loading="lazy">
+          <div class="art-overlay"></div>
+          <figcaption class="art-info">
+            <h2 class="art-title">The contract</h2>
+          </figcaption>
+        </figure>
+      </div>
+      <p class="cat-wm" aria-hidden="true">MACRO ENTOMOLOGIQUE</p>
+    </section>
+  </main>
+
+  <script src="assets/js/script.js"></script>
+</body>
+
+</html>

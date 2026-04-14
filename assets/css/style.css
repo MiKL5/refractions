@@ -1,34 +1,55 @@
 /* ════════════════════════════════════════════════════════════════════════════
-   Mickael Gaillard — Digital Arts Portfolio
-   style.css
+   Mickael Gaillard — Portfolio
+   style.css  ·  feuille unique partagée par index.html, da.html, photo.html
+
+   Scopes :
+     body.home    → page d'accueil (index.html)
+     (galerie)    → da.html / photo.html — sélecteurs d'ID / classes uniques,
+                    aucun préfixe body.gallery requis (pas de collision)
    ════════════════════════════════════════════════════════════════════════════ */
 
-/* ── Reset ─────────────────────────────────────────────────────────────────── */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html, body {
-  width: 100%; height: 100%;
+/* ── Reset ──────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── Base html / body ───────────────────────────────────────────────────────── */
+html {
+  height: 100%;
+}
+
+body {
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   background: #07080f;
   cursor: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-/* ── Variables ─────────────────────────────────────────────────────────────── */
+/* ── Variables ──────────────────────────────────────────────────────────────── */
 :root {
-  --bg:       #07080f;
-  --text:     #ede5d8;
-  --dim:      rgba(237, 229, 216, .38);
-  --accent:   #c8a96e;
+  --bg: #07080f;
+  --text: #ede5d8;
+  --dim: rgba(237, 229, 216, .38);
+  --accent: #c8a96e;
   --fdisplay: 'Cormorant Garamond', Georgia, serif;
-  --ftitle:   'Cinzel', 'Times New Roman', serif;
-  --fui:      'Raleway', 'Helvetica Neue', sans-serif;
-  --tcat:     680ms cubic-bezier(.76, 0, .24, 1);
-  --tart:     540ms cubic-bezier(.76, 0, .24, 1);
+  --ftitle: 'Cinzel', 'Times New Roman', serif;
+  --fui: 'Raleway', 'Helvetica Neue', sans-serif;
+  --tcat: 680ms cubic-bezier(.76, 0, .24, 1);
+  --tart: 540ms cubic-bezier(.76, 0, .24, 1);
 }
 
-/* ── Curseur personnalisé ───────────────────────────────────────────────────── */
+/* ── Curseur personnalisé (partagé) ─────────────────────────────────────────── */
 #cursor {
   position: fixed;
-  width: 10px; height: 10px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: var(--accent);
   pointer-events: none;
@@ -37,62 +58,404 @@ html, body {
   transition: width .18s, height .18s, background .2s, border .22s, opacity .2s;
   will-change: transform;
 }
+
 #cursor.big {
-  width: 30px; height: 30px;
+  width: 30px;
+  height: 30px;
   background: rgba(200, 169, 110, .12);
   border: 1px solid var(--accent);
 }
-/* Survol d'une image → anneau (invitation à glisser) */
+
+/* Galerie — survol image → invitation à glisser */
 #cursor.grab {
-  width: 28px; height: 28px;
+  width: 28px;
+  height: 28px;
   background: transparent;
   border: 1.5px solid var(--accent);
 }
-/* Pendant le glisser */
+
+/* Galerie — pendant le glisser */
 #cursor.dragging {
-  width: 46px; height: 46px;
+  width: 46px;
+  height: 46px;
   background: rgba(200, 169, 110, .05);
   border: 1px solid rgba(200, 169, 110, .35);
 }
 
-/* ── Header ────────────────────────────────────────────────────────────────── */
-#hdr {
+/* ── Grain atmosphérique (partagé) ──────────────────────────────────────────── */
+#grain {
   position: fixed;
-  top: 0; left: 0; right: 0;
-  padding: 2rem 3rem 0;
-  z-index: 200;
-  display: flex; align-items: baseline; gap: 1.2rem;
+  inset: 0;
+  z-index: 500;
   pointer-events: none;
-  animation: fadeDown .9s .3s both;
+  opacity: .03;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/></filter><rect width='300' height='300' filter='url(%23n)' opacity='1'/></svg>");
+  background-repeat: repeat;
 }
-.hdr-name {
+
+/* ── Scrollbar invisible ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   PAGE ACCUEIL  (body.home)
+   ════════════════════════════════════════════════════════════════════════════ */
+
+body.home {
+  height: 100dvh;
+  /* viewport dynamique mobile */
+  display: grid;
+  grid-template-rows: 1fr auto 1fr;
+  place-items: center;
+  padding: clamp(1.4rem, 4.2vh, 3rem) clamp(1.2rem, 4.5vw, 3.2rem);
+}
+
+/* ── Enveloppe animation (isolée pour ne pas entrer en conflit              */
+/*   avec le transform magnétique appliqué en inline par le JS) ─────────── */
+.card-wrap {
+  width: min(900px, 100%);
+}
+
+.card-wrap--photo {
+  align-self: end;
+  animation: fadeDown .95s .08s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.card-wrap--arts {
+  align-self: start;
+  animation: fadeUp .95s .18s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+/* ── Carte ───────────────────────────────────────────────────────────────── */
+.card {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: clamp(185px, 36vh, 335px);
+  border: 1px solid rgba(237, 229, 216, .075);
+  overflow: hidden;
+  text-decoration: none;
+  cursor: none;
+  will-change: transform;
+  transform-style: preserve-3d;
+  transition: border-color .55s;
+}
+
+.card:hover {
+  border-color: rgba(237, 229, 216, .17);
+}
+
+/* Fond — carte photo (tons froids argentés) */
+.card--photo {
+  background:
+    radial-gradient(ellipse 90% 90% at 16% 82%, rgba(168, 197, 216, .09) 0%, transparent 56%),
+    radial-gradient(ellipse 55% 60% at 84% 10%, rgba(100, 140, 180, .05) 0%, transparent 50%),
+    linear-gradient(140deg, #080d18 0%, #0b1120 45%, #07090e 100%);
+  --card-accent: #a8c5d8;
+}
+
+/* Fond — carte arts (tons chauds ambrés) */
+.card--arts {
+  background:
+    radial-gradient(ellipse 90% 90% at 84% 18%, rgba(200, 169, 110, .10) 0%, transparent 56%),
+    radial-gradient(ellipse 55% 60% at 14% 88%, rgba(140, 100, 40, .06) 0%, transparent 50%),
+    linear-gradient(140deg, #100c04 0%, #1a1006 45%, #0b0804 100%);
+  --card-accent: #c8a96e;
+}
+
+/* ── Filigrane carte ─────────────────────────────────────────────────────── */
+.card__wm {
+  position: absolute;
+  right: -.04em;
+  bottom: -.1em;
   font-family: var(--ftitle);
-  font-size: .85rem; font-weight: 400;
-  letter-spacing: .28em; text-transform: uppercase;
+  font-size: clamp(5rem, 13.5vw, 13rem);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -.01em;
+  color: rgba(255, 255, 255, .025);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* ── Barre d'accent gauche ───────────────────────────────────────────────── */
+.card__bar {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  bottom: 50%;
+  width: 2px;
+  background: var(--card-accent, #c8a96e);
+  opacity: .3;
+  transition:
+    top .65s cubic-bezier(.76, 0, .24, 1),
+    bottom .65s cubic-bezier(.76, 0, .24, 1),
+    opacity .5s;
+}
+
+.card:hover .card__bar {
+  top: 0;
+  bottom: 0;
+  opacity: .72;
+}
+
+/* ── Reflet spotlight (suit la souris via --mx / --my) ───────────────────── */
+.card__shine {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(500px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(255, 255, 255, .042),
+      transparent 42%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .5s;
+}
+
+.card:hover .card__shine {
+  opacity: 1;
+}
+
+/* ── Layout interne carte ────────────────────────────────────────────────── */
+.card__inner {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: clamp(1.2rem, 3.2vw, 2.6rem) clamp(1.4rem, 3.8vw, 3rem);
+}
+
+.card__inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(7, 8, 15, .70) 0%, transparent 55%),
+    linear-gradient(to right, rgba(7, 8, 15, .32) 0%, transparent 28%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card__body {
+  position: relative;
+  z-index: 1;
+}
+
+.card__title {
+  font-family: var(--fdisplay);
+  font-size: clamp(1.7rem, 2.9vw, 3rem);
+  font-weight: 600;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: .01em;
+  text-shadow: 0 3px 22px rgba(0, 0, 0, .7);
+}
+
+.card__rule {
+  width: 2.8rem;
+  height: 1px;
+  background: var(--card-accent, #c8a96e);
+  margin: .72rem 0 .55rem;
+  transform: scaleX(.35);
+  transform-origin: left;
+  opacity: .55;
+  transition:
+    transform .52s cubic-bezier(.76, 0, .24, 1),
+    opacity .45s;
+}
+
+.card:hover .card__rule {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+.card__sub {
+  font-family: var(--fui);
+  font-size: clamp(.52rem, .78vw, .66rem);
+  font-weight: 300;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── CTA carte ───────────────────────────────────────────────────────────── */
+.card__cta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: .72rem;
+  margin-top: clamp(.8rem, 2vh, 1.5rem);
+  opacity: .42;
+  transform: translateX(-7px);
+  transition:
+    opacity .48s cubic-bezier(.76, 0, .24, 1),
+    transform .48s cubic-bezier(.76, 0, .24, 1);
+}
+
+.card:hover .card__cta {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.card__cta-label {
+  font-family: var(--fui);
+  font-size: .62rem;
+  font-weight: 300;
+  letter-spacing: .24em;
+  text-transform: uppercase;
   color: var(--text);
 }
-.hdr-sep {
-  width: 2.5rem; height: 1px;
+
+.card__arrow {
+  font-family: var(--ftitle);
+  font-size: .88rem;
+  color: var(--card-accent, #c8a96e);
+  display: inline-block;
+  transition: transform .42s cubic-bezier(.76, 0, .24, 1);
+}
+
+.card:hover .card__arrow {
+  transform: translateX(5px);
+}
+
+/* ── Identité centrale ───────────────────────────────────────────────────── */
+#identity {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  padding: clamp(.8rem, 1.6vh, 1.4rem) 0;
+  animation: fadeCenter .9s .14s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.ident-name {
+  font-family: var(--ftitle);
+  font-size: clamp(.62rem, 1.05vw, .82rem);
+  font-weight: 400;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.ident-sep {
+  width: 2.4rem;
+  height: 1px;
   background: var(--dim);
   flex-shrink: 0;
 }
+
+.ident-sub {
+  font-family: var(--fui);
+  font-size: clamp(.48rem, .75vw, .6rem);
+  font-weight: 300;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+/* ── Animations accueil ──────────────────────────────────────────────────── */
+@keyframes fadeCenter {
+  from {
+    opacity: 0;
+    transform: scale(.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   PAGES GALERIE  (da.html / photo.html)
+   Sélecteurs d'ID et classes propres à la galerie — aucune collision avec
+   les règles de la page d'accueil.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+#hdr {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 2rem 3rem 0;
+  z-index: 200;
+  display: flex;
+  align-items: baseline;
+  gap: 1.2rem;
+  pointer-events: none;
+  animation: fadeDown .9s .3s both;
+}
+
+.hdr-name {
+  font-family: var(--ftitle);
+  font-size: .85rem;
+  font-weight: 400;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* Lien retour accueil — pointer-events réactivés sur l'élément seul */
+a.hdr-name {
+  text-decoration: none;
+  pointer-events: all;
+  cursor: none;
+  transition: opacity .32s;
+}
+
+a.hdr-name:hover {
+  opacity: .55;
+}
+
+.hdr-sep {
+  width: 2.5rem;
+  height: 1px;
+  background: var(--dim);
+  flex-shrink: 0;
+}
+
 .hdr-sub {
   font-family: var(--fui);
-  font-size: .6rem; font-weight: 300;
-  letter-spacing: .22em; text-transform: uppercase;
+  font-size: .6rem;
+  font-weight: 300;
+  letter-spacing: .22em;
+  text-transform: uppercase;
   color: var(--dim);
 }
 
-/* ── Indicateur diaporama (arc SVG) ─────────────────────────────────────────── */
+/* ── Indicateur diaporama (arc SVG) ─────────────────────────────────────── */
 #slide-indicator {
   position: fixed;
-  top: 1.9rem; right: 2.8rem;
+  top: 1.9rem;
+  right: 2.8rem;
   z-index: 201;
   pointer-events: none;
   animation: fadeDown .9s .35s both;
 }
-#slide-indicator svg { transform: rotate(-90deg); }
-#slide-track    { fill: none; stroke: rgba(237, 229, 216, .10); stroke-width: 2; }
+
+#slide-indicator svg {
+  transform: rotate(-90deg);
+}
+
+#slide-track {
+  fill: none;
+  stroke: rgba(237, 229, 216, .10);
+  stroke-width: 2;
+}
+
 #slide-progress {
   fill: none;
   stroke: var(--accent);
@@ -103,177 +466,282 @@ html, body {
   stroke-linecap: round;
 }
 
-/* ── Sidebar catégories ─────────────────────────────────────────────────────── */
+/* ── Sidebar catégories ──────────────────────────────────────────────────── */
 #sidebar {
   position: fixed;
-  left: 0; top: 50%;
+  left: 0;
+  top: 50%;
   transform: translateY(-50%);
   z-index: 200;
   padding: 0 1.4rem;
-  display: flex; flex-direction: column; gap: .55rem;
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
   animation: fadeLeft .9s .5s both;
 }
+
 .cat-btn {
-  background: none; border: none;
+  background: none;
+  border: none;
   font-family: var(--fui);
-  font-size: .63rem; font-weight: 400;
-  letter-spacing: .2em; text-transform: uppercase;
+  font-size: .63rem;
+  font-weight: 400;
+  letter-spacing: .2em;
+  text-transform: uppercase;
   color: var(--dim);
   cursor: none;
-  display: flex; align-items: center; gap: .7rem;
+  display: flex;
+  align-items: center;
+  gap: .7rem;
   padding: .2rem 0;
   transition: color .35s, transform .35s;
   white-space: nowrap;
 }
+
 .cat-btn::before {
   content: '';
-  width: 1.2rem; height: 1px;
+  width: 1.2rem;
+  height: 1px;
   background: var(--dim);
   flex-shrink: 0;
   transition: width .4s, background .35s;
 }
-.cat-btn.active                { color: var(--accent); transform: translateX(.4rem); }
-.cat-btn.active::before        { width: 2.2rem; background: var(--accent); }
 
-/* ── Barre basse — points + compteur ───────────────────────────────────────── */
+.cat-btn.active {
+  color: var(--accent);
+  transform: translateX(.4rem);
+}
+
+.cat-btn.active::before {
+  width: 2.2rem;
+  background: var(--accent);
+}
+
+/* ── Barre basse — points + compteur ────────────────────────────────────── */
 #btmbar {
   position: fixed;
-  bottom: 0; left: 0; right: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   padding: 0 3rem 1.8rem;
   z-index: 200;
-  display: flex; align-items: center; justify-content: center; gap: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
   pointer-events: none;
   animation: fadeUp .9s .6s both;
 }
+
 #art-dots {
-  display: flex; gap: .45rem; align-items: center;
+  display: flex;
+  gap: .45rem;
+  align-items: center;
   pointer-events: all;
 }
+
 .dot {
-  width: .3rem; height: .3rem;
+  width: .3rem;
+  height: .3rem;
   border-radius: 50%;
   background: var(--dim);
   cursor: none;
   transition: background .3s, width .3s, border-radius .3s;
 }
+
 .dot.on {
   background: var(--accent);
   width: 1.4rem;
   border-radius: .15rem;
 }
+
 #art-counter {
   font-family: var(--ftitle);
-  font-size: .75rem; letter-spacing: .12em;
+  font-size: .75rem;
+  letter-spacing: .12em;
   color: var(--dim);
 }
 
-/* ── Hint navigation (disparaît après 6 s) ──────────────────────────────────── */
+/* ── Hint navigation (disparaît après 6 s) ──────────────────────────────── */
 #hint {
   position: fixed;
-  bottom: 4.8rem; right: 2.8rem;
+  bottom: 4.8rem;
+  right: 2.8rem;
   z-index: 200;
   text-align: right;
   font-family: var(--fui);
-  font-size: .58rem; font-weight: 300;
-  letter-spacing: .14em; text-transform: uppercase;
+  font-size: .58rem;
+  font-weight: 300;
+  letter-spacing: .14em;
+  text-transform: uppercase;
   color: var(--dim);
   line-height: 2.2;
   opacity: 0;
   pointer-events: none;
   animation: hintAnim 6s 1.2s forwards;
 }
+
 @keyframes hintAnim {
-  0%   { opacity: 0 }
-  12%  { opacity: 1 }
-  75%  { opacity: 1 }
-  100% { opacity: 0 }
+  0% {
+    opacity: 0
+  }
+
+  12% {
+    opacity: 1
+  }
+
+  75% {
+    opacity: 1
+  }
+
+  100% {
+    opacity: 0
+  }
 }
 
-/* ── Stage — grille 2D ──────────────────────────────────────────────────────── */
+/* ── Stage — grille 2D ───────────────────────────────────────────────────── */
 #stage {
-  position: fixed; inset: 0;
+  position: fixed;
+  inset: 0;
   will-change: transform;
   transition: transform var(--tcat);
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* ── Rangée catégorie ───────────────────────────────────────────────────────── */
+/* ── Rangée catégorie ────────────────────────────────────────────────────── */
 .cat-row {
   position: absolute;
-  left: 0; width: 100vw; height: 100vh;
-  /* top positionné en inline via data-ci × 100vh */
+  left: 0;
+  width: 100vw;
+  height: 100vh;
 }
 
-/* ── Rail horizontal des œuvres ─────────────────────────────────────────────── */
+/* ── Rail horizontal des œuvres ──────────────────────────────────────────── */
 .art-rail {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: row;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: row;
   will-change: transform;
   transition: transform var(--tart);
 }
 
-/* ── Frame individuelle ─────────────────────────────────────────────────────── */
+/* ── Frame individuelle ──────────────────────────────────────────────────── */
 .art-frame {
   flex: 0 0 100vw;
-  width: 100vw; height: 100vh;
-  position: relative; overflow: hidden;
-}
-.art-frame img {
-  width: 100%; height: 100%;
-  object-fit: cover; display: block;
-  pointer-events: none;
-  -webkit-user-drag: none;
-  user-drag: none;
-  animation: kenburns 28s ease-in-out infinite alternate;
-}
-@keyframes kenburns {
-  from { transform: scale(1);    }
-  to   { transform: scale(1.06); }
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  /* Fond de secours */
 }
 
-/* ── Dégradés de protection ─────────────────────────────────────────────────── */
+/* Couche d'ambiance : le fond flou */
+.art-frame::before {
+  content: "";
+  position: absolute;
+  /* On déborde largement pour éliminer les fuites de noir sur les bords */
+  top: -10%;
+  left: -10%;
+  right: -10%;
+  bottom: -10%;
+
+  background-image: var(--img-url);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Intensité du flou et assombrissement */
+  filter: blur(60px) brightness(0.4) saturate(1.2);
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+
+  /* On scale légèrement pour éviter l'effet de vignettage du flou */
+  transform: scale(1.1);
+  pointer-events: none;
+}
+
+.art-frame.loaded::before {
+  opacity: 1;
+  /* Apparition fluide une fois l'image prête */
+}
+
+/* Couche principale : l'œuvre respectée */
+.art-frame img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* Respect absolu du ratio original */
+  display: block;
+}
+
+@keyframes kenburns {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.06);
+  }
+}
+
+/* ── Dégradés de protection ──────────────────────────────────────────────── */
 .art-overlay {
-  position: absolute; inset: 0;
+  position: absolute;
+  inset: 0;
   background:
-    linear-gradient(to bottom, rgba(7, 8, 15, .58)  0%,  transparent 28%),
-    linear-gradient(to top,    rgba(7, 8, 15, .82)  0%,  transparent 42%),
-    linear-gradient(to right,  rgba(7, 8, 15, .36)  0%,  transparent 26%);
+    linear-gradient(to bottom, rgba(7, 8, 15, .58) 0%, transparent 28%),
+    linear-gradient(to top, rgba(7, 8, 15, .82) 0%, transparent 42%),
+    linear-gradient(to right, rgba(7, 8, 15, .36) 0%, transparent 26%);
   z-index: 1;
   pointer-events: none;
 }
+
 /* Liseré d'accent à gauche — couleur héritée via --accent de la cat-row */
 .art-overlay::after {
   content: '';
   position: absolute;
-  left: 0; top: 0; bottom: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
   width: 3px;
   background: var(--accent, #c8a96e);
   opacity: .75;
 }
 
-/* ── Titre de l'œuvre ───────────────────────────────────────────────────────── */
+/* ── Titre de l'œuvre ────────────────────────────────────────────────────── */
 .art-info {
   position: absolute;
-  bottom: 2.8rem; left: 3.6rem;
+  bottom: 2.8rem;
+  left: 3.6rem;
   z-index: 2;
   color: var(--text);
 }
+
 .art-title {
   font-family: var(--fdisplay);
   font-size: clamp(1.9rem, 3.2vw, 3.4rem);
-  font-weight: 600; font-style: italic;
-  line-height: 1; letter-spacing: .015em;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: .015em;
   text-shadow: 0 3px 28px rgba(0, 0, 0, .75);
 }
 
-/* ── Filigrane de catégorie ─────────────────────────────────────────────────── */
+/* ── Filigrane de catégorie ──────────────────────────────────────────────── */
 .cat-wm {
   position: absolute;
-  bottom: -.05em; right: -.04em;
+  bottom: -.05em;
+  right: -.04em;
   font-family: var(--ftitle);
   font-size: clamp(7rem, 16vw, 15rem);
-  font-weight: 600; line-height: 1;
+  font-weight: 600;
+  line-height: 1;
   letter-spacing: -.01em;
   color: rgba(255, 255, 255, .03);
   pointer-events: none;
@@ -282,82 +750,192 @@ html, body {
   white-space: nowrap;
 }
 
-/* ── Placeholder ────────────────────────────────────────────────────────────── */
+/* ── Placeholder ──────────────────────────────────────────────────────────── */
 .ph-frame {
   background: radial-gradient(ellipse at 50% 50%,
-    rgba(255, 255, 255, .025) 0%, transparent 70%);
-  display: flex; align-items: center; justify-content: center;
+      rgba(255, 255, 255, .025) 0%, transparent 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.ph-inner        { text-align: center; }
+
+.ph-inner {
+  text-align: center;
+}
+
 .ph-cross {
-  width: 3rem; height: 3rem;
-  position: relative; margin: 0 auto 1.6rem;
+  width: 3rem;
+  height: 3rem;
+  position: relative;
+  margin: 0 auto 1.6rem;
 }
-.ph-cross span   { position: absolute; background: rgba(255, 255, 255, .11); }
-.ph-cross span:first-child { width: 1px; height: 100%; left: 50%; top: 0; }
-.ph-cross span:last-child  { height: 1px; width: 100%; top: 50%; left: 0; }
+
+.ph-cross span {
+  position: absolute;
+  background: rgba(255, 255, 255, .11);
+}
+
+.ph-cross span:first-child {
+  width: 1px;
+  height: 100%;
+  left: 50%;
+  top: 0;
+}
+
+.ph-cross span:last-child {
+  height: 1px;
+  width: 100%;
+  top: 50%;
+  left: 0;
+}
+
 .ph-soon {
   font-family: var(--ftitle);
   font-size: 1.1rem;
-  letter-spacing: .32em; text-transform: uppercase;
+  letter-spacing: .32em;
+  text-transform: uppercase;
   color: rgba(237, 229, 216, .2);
   margin-bottom: .6rem;
 }
+
 .ph-sub {
   font-family: var(--fui);
-  font-size: .58rem; font-weight: 300;
-  letter-spacing: .16em; text-transform: uppercase;
+  font-size: .58rem;
+  font-weight: 300;
+  letter-spacing: .16em;
+  text-transform: uppercase;
   color: rgba(237, 229, 216, .13);
 }
 
-/* ── Flash + reveal catégorie ───────────────────────────────────────────────── */
+/* ── Flash + reveal catégorie ────────────────────────────────────────────── */
 #cat-flash {
-  position: fixed; inset: 0;
+  position: fixed;
+  inset: 0;
   z-index: 300;
   background: var(--bg);
   pointer-events: none;
   opacity: 0;
   transition: opacity .2s;
 }
-#cat-flash.flash { opacity: .5; }
+
+#cat-flash.flash {
+  opacity: .5;
+}
 
 #cat-reveal {
   position: fixed;
-  top: 50%; left: 50%;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
   z-index: 310;
   font-family: var(--ftitle);
   font-size: clamp(3rem, 8vw, 7rem);
-  letter-spacing: .35em; text-transform: uppercase;
+  letter-spacing: .35em;
+  text-transform: uppercase;
   color: var(--text);
   pointer-events: none;
   opacity: 0;
   transition: opacity .22s, letter-spacing .5s;
 }
-#cat-reveal.show { opacity: .92; letter-spacing: .52em; }
 
-/* ── Grain atmosphérique ────────────────────────────────────────────────────── */
-#grain {
-  position: fixed; inset: 0;
-  z-index: 500; pointer-events: none;
-  opacity: .03;
-  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/></filter><rect width='300' height='300' filter='url(%23n)' opacity='1'/></svg>");
-  background-repeat: repeat;
+#cat-reveal.show {
+  opacity: .92;
+  letter-spacing: .52em;
 }
 
-/* ── Animations d'entrée ────────────────────────────────────────────────────── */
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ANIMATIONS (partagées)
+   ════════════════════════════════════════════════════════════════════════════ */
 @keyframes fadeDown {
-  from { opacity: 0; transform: translateY(-1rem); }
-  to   { opacity: 1; transform: none; }
-}
-@keyframes fadeLeft {
-  from { opacity: 0; transform: translateX(-1.2rem); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(1rem); }
-  to   { opacity: 1; transform: none; }
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-/* ── Divers ─────────────────────────────────────────────────────────────────── */
-::-webkit-scrollbar { display: none; }
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fadeLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-1.2rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+/* ════════════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+  .card__wm {
+    font-size: 5.5rem;
+  }
+
+  .card__sub {
+    letter-spacing: .11em;
+    font-size: .58rem;
+  }
+
+  .ident-sep {
+    width: 1.6rem;
+  }
+}
+
+/* Landscape mobile très court */
+@media (max-height: 500px) {
+  .card {
+    height: clamp(140px, 40vh, 185px);
+  }
+
+  .card__title {
+    font-size: clamp(1.3rem, 4vw, 2rem);
+  }
+}
+
+/* Écrans tactiles — curseur personnalisé inutile */
+@media (pointer: coarse) {
+  #cursor {
+    display: none;
+  }
+
+  body {
+    cursor: auto;
+  }
+
+  /* Home : les cartes redeviennent cliquables normalement */
+  .card {
+    cursor: pointer;
+  }
+
+  .card__sub {
+    white-space: normal;
+  }
+
+  /* Galerie : les boutons sidebar deviennent tappables */
+  .cat-btn {
+    cursor: pointer;
+  }
+}
